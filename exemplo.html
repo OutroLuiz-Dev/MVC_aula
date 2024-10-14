@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+  <head>
+
+    <meta charset="UTF-8">
+
+    <title>Consulta de CEP</title>
+
+    <style>
+
+      body { font-family: Arial, sans-serif; }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <h1>Consulta de CEP</h1>
+
+    <input type="text" id="cep" placeholder="Digite o CEP">
+
+    <button onclick="controller.getAddress(cep.value)">Consultar</button>
+
+    <div id="address"></div>
+
+  </body>
+
+  <script>
+
+// Modelo
+
+class AddressModel {
+
+      async getAddress(cep) {
+
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+
+        return response.json();
+
+      }
+
+}
+
+
+// Visualização
+//Parte visível do código que o usuário intereage com o sistema.
+
+const view = {
+
+    displayAddress: function(data) {
+
+        const addressDiv = document.getElementById('address');
+
+        addressDiv.innerHTML = `
+        ${data.localidade} - ${data.uf}
+
+`;
+
+    }
+
+};
+
+
+// Controllers
+
+class AddressController {
+
+      constructor(model, view) {
+
+        this.model = model;
+
+        this.view = view;
+
+      }
+
+
+      async getAddress(cep) {
+
+        const data = await this.model.getAddress(cep);
+
+        this.view.displayAddress(data);
+
+      }
+
+}
+
+
+// Inicializa a aplicação
+
+const model = new AddressModel();
+
+const controller = new AddressController(model, view);
+
+</script>
+
+</html>

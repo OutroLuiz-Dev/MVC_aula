@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padrão MVC - Aula Completa</title>
+    <style>
+        body {
+            background-color: #f9f9f9; /* Cinza bem claro */
+            color: #333; /* Letras cinzas escuras */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            background-color: #e0e0e0; /* Fundo cinza claro */
+            color: #333; /* Letras escuras */
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .accordion {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border: none;
+            outline: none;
+            transition: background-color 0.2s;
+            border-radius: 5px;
+        }
+        .accordion:hover {
+            background-color: #d0d0d0;
+        }
+        .panel {
+            display: none;
+            padding: 0 18px;
+            background-color: #f1f1f1;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .code-block {
+            background-color: #000; /* Fundo preto */
+            color: #FFD700; /* Letras amarelas */
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Aula: Padrão de Arquitetura de Software Model-View-Controller (MVC)</h1>
+
+<h2 class="accordion">Introdução</h2>
+<div class="panel">
+    <p>A arquitetura de software é a espinha dorsal de qualquer aplicativo ou sistema, determinando como os componentes se relacionam, interagem e fornecem funcionalidades. Nesse contexto, o Padrão de Arquitetura de Software Model-View-Controller (MVC) se destaca como um dos modelos mais populares e eficazes para projetar aplicativos de software.</p>
+</div>
+
+<h2 class="accordion">Componentes Fundamentais do MVC</h2>
+<div class="panel">
+    <ul>
+        <li><strong>Modelo (Model):</strong> Lida com a lógica de negócios e os dados subjacentes.</li>
+        <li><strong>Visão (View):</strong> Trata da apresentação e da interface do usuário.</li>
+        <li><strong>Controlador (Controller):</strong> Atua como um intermediário entre o Modelo e a Visão, gerenciando a lógica de controle.</li>
+    </ul>
+    <p>Essa divisão clara de responsabilidades permite uma organização e manutenção eficiente de aplicativos complexos.</p>
+</div>
+
+<h2 class="accordion">Benefícios do MVC</h2>
+<div class="panel">
+    <ul>
+        <li><strong>Modularidade:</strong> Cada componente do MVC pode ser desenvolvido independentemente, promovendo a reutilização de código.</li>
+        <li><strong>Escalabilidade:</strong> A lógica de negócios pode ser reutilizada em diferentes partes do aplicativo.</li>
+        <li><strong>Testabilidade:</strong> As três camadas podem ser testadas de forma independente, facilitando a garantia de qualidade do código.</li>
+    </ul>
+</div>
+
+<h2 class="accordion">Passo a Passo: Entendendo o Padrão MVC</h2>
+<div class="panel">
+    <h3>Passo 1: Modelo (Model) - Gerenciamento de Dados e Lógica de Negócios</h3>
+    <p>O Modelo é responsável por gerenciar os dados e a lógica de negócios do seu aplicativo.</p>
+    <div class="code-block">
+        <code>
+// Modelo: Gerencia as tarefas
+class TaskModel {
+    constructor() {
+        this.tasks = [];
+    }
+    
+    addTask(task) {
+        this.tasks.push(task);
+    }
+    
+    getTasks() {
+        return this.tasks;
+    }
+}
+        </code>
+    </div>
+    
+    <h3>Passo 2: Visualização (View) - Apresentação de Dados</h3>
+    <p>A Visualização é responsável por mostrar os dados para o usuário.</p>
+    <div class="code-block">
+        <code>
+<!-- Visualização: Interface do usuário -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .task-list {
+            margin-top: 20px;
+        }
+        .task-item {
+            background-color: #f2f2f2;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lista de Tarefas</h1>
+    <div id="taskList" class="task-list"></div>
+</body>
+</html>
+        </code>
+    </div>
+
+    <h3>Passo 3: Controlador (Controller) - Coordenação de Ações</h3>
+    <p>O Controlador atua como intermediário, coordenando as ações do usuário e as mudanças entre o modelo e a visualização.</p>
+    <div class="code-block">
+        <code>
+// Controlador: Coordena as ações
+class TaskController {
+    constructor(model, view) {
+        this.model = model;
+        this.view = view;
+        
+        // Renderiza as tarefas iniciais
+        this.view.renderTasks(this.model.getTasks());
+    }
+
+    addTask(task) {
+        this.model.addTask(task);
+        this.view.renderTasks(this.model.getTasks());
+    }
+}
+
+// Função para renderizar a lista de tarefas
+function renderTasks(tasks) {
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    tasks.forEach(task => {
+        const taskItem = document.createElement('div');
+        taskItem.classList.add('task-item');
+        taskItem.textContent = task;
+        taskList.appendChild(taskItem);
+    });
+}
+
+// Inicializa o MVC
+const model = new TaskModel();
+const view = { renderTasks };
+const controller = new TaskController(model, view);
+
+// Adiciona tarefas para exemplo
+controller.addTask('Estudar JavaScript');
+controller.addTask('Implementar padrão MVC');
+        </code>
+    </div>
+
+    <h3>Passo 4: Fluxo Geral do MVC</h3>
+    <p>O usuário interage com a Visualização. A Visualização envia eventos para o Controlador. O Controlador processa esses eventos e atualiza o Modelo. O Modelo notifica a Visualização sobre as mudanças. A Visualização se atualiza com as mudanças dos dados.</p>
+</div>
+
+<h2 class="accordion">Aplicação do Padrão MVC no Desenvolvimento Web</h2>
+<div class="panel">
+    <p>Modelo (Model): Gerencia os dados e a lógica de negócios.</p>
+    <p>Visualização (View): Apresenta os dados ao usuário.</p>
+    <p>Controlador (Controller): Coordena as interações entre o usuário e o sistema.</p>
+    <h3>Exemplo Completo com API ViaCEP</h3>
+    <div class="code-block">
+        <code>
+// Modelo de Endereço
+class AddressModel {
+    constructor() {
+        this.address = {};
+    }
+
+    setAddress(address) {
+        this.address = address;
+    }
+
+    getAddress() {
+        return this.address;
+    }
+}
+
+// Visão para exibir o endereço
+class AddressView {
+    constructor() {
+        this.output = document.getElementById('output');
+    }
+
+    render(address) {
+        if (address.erro) {
+            this.output.innerHTML = '<p style="color: red;">CEP não encontrado.</p>';
+            return;
+        }
+        this.output.innerHTML = `
+            <h3>Resultados da Busca:</h3>
+            <p><strong>Logradouro:</strong> ${address.logradouro}</p>
+            <p><strong>Bairro:</strong> ${address.bairro}</p>
+            <p><strong>Cidade:</strong> ${address.localidade}</p>
+            <p><strong>Estado:</strong> ${address.uf}</p>
+        `;
+    }
+}
+
+// Controlador: Gerencia a interação entre modelo e visão
+class AddressController {
+    constructor(model, view) {
+        this.model = model;
+        this.view = view;
+
+        // Adiciona evento para o formulário
+        document.getElementById('cepForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const cep = document.getElementById('cep').value;
+            this.fetchAddress(cep);
+        });
+    }
+
+    async fetchAddress(cep) {
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            if (!response.ok) throw new Error('Erro ao buscar o endereço');
+            const data = await response.json();
+            this.model.setAddress(data);
+            this.view.render(this.model.getAddress());
+        } catch (error) {
+            this.view.output.innerHTML = `<p style="color: red;">${error.message}</p>`;
+        }
+    }
+}
+
+// Inicializa o MVC
+const addressModel = new AddressModel();
+const addressView = new AddressView();
+const addressController = new AddressController(addressModel, addressView);
+        </code>
+    </div>
+
+    <form id="cepForm">
+        <label for="cep">Digite o CEP:</label>
+        <input type="text" id="cep" placeholder="00000-000" required>
+        <button type="submit">Buscar Endereço</button>
+    </form>
+
+    <div id="output" class="task-list"></div>
+</div>
+
+<script>
+    // Inicializa o MVC
+    const addressModel = new AddressModel();
+    const addressView = new AddressView();
+    const addressController = new AddressController(addressModel, addressView);
+</script>
+
+<script>
+    // Código para os acordions
+    const accordions = document.getElementsByClassName("accordion");
+    for (let i = 0; i < accordions.length; i++) {
+        accordions[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
